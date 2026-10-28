@@ -14,4 +14,5 @@ npm run typecheck      # tsc --noEmit
 - `@opentui/core` needs `--experimental-ffi`; the npm scripts and `bin/codium-ext.js` already pass it.
 - Keep platform selection dynamic (`runtimePlatform()` in `src/models.ts`) and spawn `codium` through
   `spawnCommand()` in `src/installed.ts`.
-- Commit and push unless told not to; no AI co-author trailers.
+- Use Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` …) and push unless
+  told not to; no AI co-author trailers.

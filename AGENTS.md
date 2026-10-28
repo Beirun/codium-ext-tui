@@ -57,6 +57,9 @@ lock inside `CodiumInstaller`, and cancellation is cooperative through a shared 
 ## Git
 
 - Commit and push finished work automatically to `origin main` unless told otherwise.
-- Use concise imperative commit messages.
+- Use Conventional Commits: `type(scope): summary`, imperative and lowercase, no trailing period.
+  Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, `ci`, `perf`, `style`.
+  Examples: `feat(installer): verify installs before reporting success`,
+  `docs: add AGENTS.md and CLAUDE.md`, `chore: replace run scripts with npm run dev`.
 - Never add AI co-author or attribution trailers to commits or PRs.
 - Do not rewrite published history or force-push without explicit permission.
