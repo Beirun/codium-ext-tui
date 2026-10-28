@@ -26,7 +26,25 @@ export interface InstalledExtension {
   targetPlatform: string | null
 }
 
-export const COMPATIBLE_PLATFORMS = ["universal", "linux-x64"] as const
+export const UNIVERSAL_PLATFORM = "universal"
+
+function archKey(archName: string): string {
+  switch (archName) {
+    case "x64":
+    case "arm64":
+    case "ia32":
+      return archName
+    case "arm":
+      return "armhf"
+    default:
+      return archName
+  }
+}
+
+/** Gallery targetPlatform for this machine, e.g. linux-x64, darwin-arm64, win32-x64. */
+export function runtimePlatform(platformName: string = process.platform, archName: string = process.arch): string {
+  return `${platformName}-${archKey(archName)}`
+}
 
 export function extensionId(candidate: { publisher: string; name: string }): string {
   return `${candidate.publisher}.${candidate.name}`
@@ -68,35 +86,41 @@ export function compareVersions(a: string, b: string): number {
 }
 
 function normalizePlatform(platform: string | null | undefined): string {
-  return platform && platform.length > 0 ? platform : "universal"
+  return platform && platform.length > 0 ? platform : UNIVERSAL_PLATFORM
 }
 
 /**
  * The marketplace returns one version entry per target platform. Keep the ones
- * this machine can actually run, one entry per version, preferring linux-x64.
+ * this machine can actually run, one entry per version, preferring the native
+ * build over a universal one.
  */
 export function selectCompatible(
   entries: readonly VersionEntry[],
-  options: { includePrerelease?: boolean } = {},
+  options: { includePrerelease?: boolean; platform?: string } = {},
 ): VersionEntry[] {
+  const target = options.platform ?? runtimePlatform()
+  const compatible: readonly string[] = target === UNIVERSAL_PLATFORM ? [UNIVERSAL_PLATFORM] : [UNIVERSAL_PLATFORM, target]
   const byVersion = new Map<string, VersionEntry>()
   for (const entry of entries) {
     const platform = normalizePlatform(entry.targetPlatform)
-    if (!COMPATIBLE_PLATFORMS.includes(platform as (typeof COMPATIBLE_PLATFORMS)[number])) continue
+    if (!compatible.includes(platform)) continue
     if (entry.prerelease && !options.includePrerelease) continue
     const normalized: VersionEntry = { ...entry, targetPlatform: platform }
     const existing = byVersion.get(normalized.version)
-    if (!existing || (existing.targetPlatform === "universal" && platform === "linux-x64")) {
+    if (!existing || (existing.targetPlatform === UNIVERSAL_PLATFORM && platform === target)) {
       byVersion.set(normalized.version, normalized)
     }
   }
   return [...byVersion.values()].sort((a, b) => compareVersions(b.version, a.version))
 }
 
-export function latestStable(entries: readonly VersionEntry[]): VersionEntry | null {
-  const stable = selectCompatible(entries)
+export function latestStable(
+  entries: readonly VersionEntry[],
+  options: { platform?: string } = {},
+): VersionEntry | null {
+  const stable = selectCompatible(entries, options)
   if (stable.length > 0) return stable[0] ?? null
-  const any = selectCompatible(entries, { includePrerelease: true })
+  const any = selectCompatible(entries, { ...options, includePrerelease: true })
   return any[0] ?? null
 }
 

@@ -20,9 +20,24 @@ export interface CommandResult {
   stderr: string
 }
 
+function quoteWindowsArgument(argument: string): string {
+  if (argument.length === 0) return '""'
+  return /^[^\s"&|<>^]*$/.test(argument) ? argument : `"${argument.replace(/"/g, '""')}"`
+}
+
+/** Spawns an executable, going through cmd.exe on Windows so `.cmd` shims like codium.cmd resolve. */
+export function spawnCommand(command: string, args: string[], options: { cwd?: string } = {}) {
+  const stdio: ["ignore", "pipe", "pipe"] = ["ignore", "pipe", "pipe"]
+  if (process.platform === "win32") {
+    const line = [command, ...args].map(quoteWindowsArgument).join(" ")
+    return spawn(process.env.ComSpec ?? "cmd.exe", ["/d", "/s", "/c", line], { cwd: options.cwd, stdio })
+  }
+  return spawn(command, args, { cwd: options.cwd, stdio })
+}
+
 export function runCommand(command: string, args: string[], options: { timeoutMs?: number; cwd?: string } = {}): Promise<CommandResult> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { cwd: options.cwd, stdio: ["ignore", "pipe", "pipe"] })
+    const child = spawnCommand(command, args, { cwd: options.cwd })
     let stdout = ""
     let stderr = ""
     let settled = false

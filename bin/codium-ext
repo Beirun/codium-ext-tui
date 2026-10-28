@@ -1,2 +1,3 @@
 #!/bin/sh
-exec node --experimental-ffi --disable-warning=ExperimentalWarning "$HOME/Projects/codium-ext-tui/src/main.ts" "$@"
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec node --experimental-ffi --disable-warning=ExperimentalWarning "$dir/../src/main.ts" "$@"

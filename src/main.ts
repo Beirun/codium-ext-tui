@@ -3,7 +3,7 @@ import { parseArgs } from "node:util"
 import { MarketplaceClient } from "./marketplace.ts"
 import { CodiumInstaller } from "./installer.ts"
 import { listInstalled } from "./installed.ts"
-import { latestStable, selectCompatible } from "./models.ts"
+import { latestStable, runtimePlatform, selectCompatible } from "./models.ts"
 import { App } from "./ui/app.ts"
 import { MainScreen } from "./ui/main-screen.ts"
 import { log } from "./log.ts"
@@ -56,7 +56,7 @@ async function runInstall(
   let entry = requested
     ? selectCompatible(candidate.versions, { includePrerelease: true }).find((version) => version.version === requested)
     : latestStable(candidate.versions)
-  if (!entry) fail(`version ${requested} is not available for linux-x64/universal`)
+  if (!entry) fail(`version ${requested} is not available for ${runtimePlatform()}/universal`)
   process.stdout.write(`${candidate.publisher}.${candidate.name}@${entry.version} (${entry.targetPlatform})\n`)
   if (dryRun) {
     process.stdout.write(`${entry.downloadUrl}\n`)

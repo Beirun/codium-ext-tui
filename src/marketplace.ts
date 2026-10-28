@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import { createWriteStream } from "node:fs"
 import { rm } from "node:fs/promises"
 import type { ExtensionCandidate, VersionEntry } from "./models.ts"
-import { selectCompatible } from "./models.ts"
+import { runtimePlatform, selectCompatible } from "./models.ts"
 
 const MARKETPLACE_URL = "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery"
 const DOWNLOAD_BASE = "https://marketplace.visualstudio.com/_apis/public/gallery/publishers"
@@ -166,7 +166,7 @@ export class MarketplaceClient {
     if (!candidate) throw new NotFoundError(`extension not found: ${id}`)
     const compatible = selectCompatible(candidate.versions, { includePrerelease: true })
     if (compatible.length === 0) {
-      throw new NotFoundError(`no linux-x64 or universal build for ${id}`)
+      throw new NotFoundError(`no ${runtimePlatform()} or universal build for ${id}`)
     }
     const resolved: ExtensionCandidate = { ...candidate, versions: compatible }
     this.cache.set(key, resolved)

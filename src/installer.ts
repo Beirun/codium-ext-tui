@@ -1,9 +1,8 @@
-import { spawn } from "node:child_process"
 import { mkdir, readdir, rm, stat } from "node:fs/promises"
 import { randomUUID } from "node:crypto"
-import { join } from "node:path"
+import { basename, join } from "node:path"
 import { CACHE_ROOT, log } from "./log.ts"
-import { runCommand } from "./installed.ts"
+import { runCommand, spawnCommand } from "./installed.ts"
 import type { CodiumOptions } from "./installed.ts"
 import { listInstalled } from "./installed.ts"
 import type { Cancellation } from "./marketplace.ts"
@@ -39,8 +38,10 @@ export interface InstallCallbacks {
 const MANIFEST_ENTRY = "extension.vsixmanifest"
 
 async function extractManifest(path: string): Promise<string> {
+  // bsdtar ships as `tar` on Windows and `bsdtar` on macOS; unzip covers the rest.
   const attempts: Array<[string, string[]]> = [
     ["bsdtar", ["-xOf", path, MANIFEST_ENTRY]],
+    ["tar", ["-xOf", path, MANIFEST_ENTRY]],
     ["unzip", ["-p", path, MANIFEST_ENTRY]],
   ]
   let lastError: unknown = null
@@ -106,7 +107,7 @@ function runCodiumCommand(
   cancellation: Cancellation,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(codium, args, { stdio: ["ignore", "pipe", "pipe"] })
+    const child = spawnCommand(codium, args)
     const tail: string[] = []
     let settled = false
     const timer = setTimeout(() => {
@@ -234,7 +235,7 @@ export class CodiumInstaller {
 
       callbacks.onPhase?.("Validating package")
       await validateVsix(vsixPath, id, entry.version)
-      callbacks.onLog?.(`validated ${vsixPath.split("/").pop()}`)
+      callbacks.onLog?.(`validated ${basename(vsixPath)}`)
 
       callbacks.onPhase?.("Installing with codium")
       await runCodiumCommand(this.codium, [...this.flags(), "--install-extension", vsixPath, "--force"], callbacks, cancellation)
