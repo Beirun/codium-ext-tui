@@ -52,19 +52,26 @@ npm run dev
 
 ## CLI
 
-`bin/codium-ext.js` is the CLI entry point. Run it directly, or `npm link` once to put `codium-ext` on `PATH`:
+`bin/codium-ext.js` is the CLI entry point. Link it once to get a `codium-ext` command on `PATH`:
 
 ```sh
-./bin/codium-ext.js --list
-./bin/codium-ext.js --probe dbaeumer.vscode-eslint
-./bin/codium-ext.js --install dbaeumer.vscode-eslint            # latest stable
-./bin/codium-ext.js --install dbaeumer.vscode-eslint@3.0.24     # exact version
-./bin/codium-ext.js --install <id> --dry-run                    # resolve only
-./bin/codium-ext.js --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
-./bin/codium-ext.js --help
+npm link                                            # npm prefix is user-writable (nvm, volta, ~/.npm-global)
+ln -sf "$PWD/bin/codium-ext.js" ~/.local/bin/codium-ext   # npm prefix is system-owned
 ```
 
-On Windows, run `node bin\codium-ext.js …` (or the `codium-ext.cmd` shim created by `npm link`).
+On Windows, `npm link` creates `codium-ext.cmd` in the npm global bin directory.
+
+```sh
+codium-ext --list
+codium-ext --probe dbaeumer.vscode-eslint
+codium-ext --install dbaeumer.vscode-eslint            # latest stable
+codium-ext --install dbaeumer.vscode-eslint@3.0.24     # exact version
+codium-ext --install <id> --dry-run                    # resolve only
+codium-ext --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
+codium-ext --help
+```
+
+Without linking, `./bin/codium-ext.js …` (or `node bin\codium-ext.js …` on Windows) does the same.
 
 ## Layout
 
