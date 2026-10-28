@@ -1,0 +1,19 @@
+{
+  "name": "codium-ext",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "codium-ext": "./bin/codium-ext" },
+  "scripts": {
+    "start": "node --experimental-ffi src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-ffi --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.6.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

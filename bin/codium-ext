@@ -1,0 +1,2 @@
+#!/bin/sh
+exec node --experimental-ffi --disable-warning=ExperimentalWarning "$HOME/Projects/codium-ext-tui/src/main.ts" "$@"
