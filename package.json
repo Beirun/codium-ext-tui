@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "bin": { "codium-ext": "./bin/codium-ext.js" },
   "scripts": {
     "start": "node --experimental-ffi src/main.ts",
     "typecheck": "tsc --noEmit",

@@ -18,17 +18,16 @@ Supports Linux, macOS, and Windows on x64 and arm64.
 
 ```sh
 npm install
-./bin/codium-ext          # macOS / Linux
-bin\codium-ext.cmd        # Windows
+./run.sh          # macOS / Linux
+run.cmd           # Windows (cmd)
+.\run.ps1         # Windows (PowerShell)
 ```
 
-`bin/codium-ext` resolves its own location, so it can be symlinked into `~/.local/bin`:
+Each launcher resolves its own location, so `run.sh` can be symlinked into `~/.local/bin`:
 
 ```sh
-ln -sf ~/Projects/codium-ext-tui/bin/codium-ext ~/.local/bin/codium-ext
+ln -sf ~/Projects/codium-ext-tui/run.sh ~/.local/bin/codium-ext
 ```
-
-`npm link` also works on all three platforms (the `bin` entry is a Node script, which npm shims as `.cmd` on Windows).
 
 ## Keys
 
@@ -60,12 +59,12 @@ ln -sf ~/Projects/codium-ext-tui/bin/codium-ext ~/.local/bin/codium-ext
 ## CLI
 
 ```sh
-codium-ext --list
-codium-ext --probe dbaeumer.vscode-eslint
-codium-ext --install dbaeumer.vscode-eslint            # latest stable
-codium-ext --install dbaeumer.vscode-eslint@3.0.24     # exact version
-codium-ext --install <id> --dry-run                    # resolve only
-codium-ext --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
+./run.sh --list
+./run.sh --probe dbaeumer.vscode-eslint
+./run.sh --install dbaeumer.vscode-eslint            # latest stable
+./run.sh --install dbaeumer.vscode-eslint@3.0.24     # exact version
+./run.sh --install <id> --dry-run                    # resolve only
+./run.sh --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
 ```
 
 ## Layout
