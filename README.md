@@ -45,10 +45,12 @@ ln -sf ~/Projects/codium-ext-tui/run.sh ~/.local/bin/codium-ext
 ## Screens
 
 - **Search** — type a query and press enter. Each result is a three-line row: extension display name,
-  author display name, then latest version · install count.
+  publisher id, then latest version · install count.
 - **Installed** — the extensions installed on this machine, read from `codium --list-extensions --show-versions`
-  and enriched from `~/.vscode-oss/extensions/extensions.json` (source, pinned, install date). Rows use the same
-  shape: display name (from the extension's `package.json`), publisher, then version · source · date.
+  and enriched from `extensions.json` in the VSCodium extensions directory (`~/.vscode-oss/extensions` on
+  macOS/Linux, `%USERPROFILE%\.vscode-oss\extensions` on Windows) for source, pinned state, and install date.
+  Rows use the same shape: display name (from the extension's `package.json`), publisher id, then
+  version · source · pinned · date.
 - **Details** — description, install count, last update, installed version, then
   `Install latest`, `Choose version…`, and — when the extension is installed — `Uninstall` (confirmed first,
   then `codium --uninstall-extension` and a poll until it disappears from the list).
@@ -65,26 +67,32 @@ ln -sf ~/Projects/codium-ext-tui/run.sh ~/.local/bin/codium-ext
 ./run.sh --install dbaeumer.vscode-eslint@3.0.24     # exact version
 ./run.sh --install <id> --dry-run                    # resolve only
 ./run.sh --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
+./run.sh --help
 ```
 
 ## Layout
 
 ```
+run.sh             POSIX launcher (resolves its own directory)
+run.cmd            Windows cmd launcher
+run.ps1            Windows PowerShell launcher
 src/
   main.ts          CLI entry and headless modes
   models.ts        pure data types: version ordering, platform selection, list parsing
   marketplace.ts   extensionquery search/versions and streamed download with sha256 check
   installed.ts     codium --list-extensions + extensions.json metadata
   installer.ts     work dir, VSIX validation, codium subprocess, post-install verification
+  log.ts           per-platform cache directory and app.log
   theme.ts         Tokyo Night palette, square borders
-  ui/              app shell (header/body/footer, screen stack) and the four screens
+  ui/              app shell (header/body/footer, screen stack) and the main, details,
+                   version, install, and confirmation screens
 tests/             node:test — models, marketplace parsing, installer pipeline, UI via createTestRenderer
 ```
 
 Downloads and installs happen under a per-user cache directory (`~/.cache/codium-ext-tui` on Linux,
 `~/Library/Caches/codium-ext-tui` on macOS, `%LOCALAPPDATA%\codium-ext-tui\cache` on Windows) in
-`work/<uuid>/`, which is removed in a `finally` block; stale directories older than an hour are swept at
-startup. A log is written next to it in `app.log`.
+`work/<uuid>/`, which is removed in a `finally` block. Each install start also sweeps work directories
+older than an hour. A log is written alongside it in `app.log`.
 
 ## Tests
 
