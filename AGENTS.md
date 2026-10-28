@@ -35,6 +35,7 @@ src/installer.ts    install pipeline: download → validate VSIX → codium inst
 src/log.ts          per-platform cache root (work dirs, app.log)
 src/ui/             App shell (header/body/footer, screen stack) and the screens
 tests/              node:test suites
+docs/architecture.md  module map, data flow, and invariants
 ```
 
 Keep `models.ts` free of I/O — it is the unit-tested core. The install pipeline is serialized by a

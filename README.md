@@ -89,6 +89,8 @@ src/
   ui/              app shell (header/body/footer, screen stack) and the main, details,
                    version, install, and confirmation screens
 tests/             node:test — models, marketplace parsing, installer pipeline, UI via createTestRenderer
+docs/
+  architecture.md  module map, data flow, install pipeline, and invariants
 ```
 
 Downloads and installs happen under a per-user cache directory (`~/.cache/codium-ext-tui` on Linux,
