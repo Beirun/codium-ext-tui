@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "bin": { "codium-ext": "./bin/codium-ext.js" },
   "scripts": {
     "dev": "node --experimental-ffi --disable-warning=ExperimentalWarning src/main.ts",
     "typecheck": "tsc --noEmit",

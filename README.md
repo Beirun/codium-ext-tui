@@ -52,19 +52,25 @@ npm run dev
 
 ## CLI
 
+`bin/codium-ext.js` is the CLI entry point. Run it directly, or `npm link` once to put `codium-ext` on `PATH`:
+
 ```sh
-npm run dev -- --list
-npm run dev -- --probe dbaeumer.vscode-eslint
-npm run dev -- --install dbaeumer.vscode-eslint            # latest stable
-npm run dev -- --install dbaeumer.vscode-eslint@3.0.24     # exact version
-npm run dev -- --install <id> --dry-run                    # resolve only
-npm run dev -- --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
-npm run dev -- --help
+./bin/codium-ext.js --list
+./bin/codium-ext.js --probe dbaeumer.vscode-eslint
+./bin/codium-ext.js --install dbaeumer.vscode-eslint            # latest stable
+./bin/codium-ext.js --install dbaeumer.vscode-eslint@3.0.24     # exact version
+./bin/codium-ext.js --install <id> --dry-run                    # resolve only
+./bin/codium-ext.js --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
+./bin/codium-ext.js --help
 ```
+
+On Windows, run `node bin\codium-ext.js …` (or the `codium-ext.cmd` shim created by `npm link`).
 
 ## Layout
 
 ```
+bin/
+  codium-ext.js    CLI entry point (passes --experimental-ffi to src/main.ts)
 src/
   main.ts          CLI entry and headless modes
   models.ts        pure data types: version ordering, platform selection, list parsing
