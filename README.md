@@ -18,15 +18,7 @@ Supports Linux, macOS, and Windows on x64 and arm64.
 
 ```sh
 npm install
-./run.sh          # macOS / Linux
-run.cmd           # Windows (cmd)
-.\run.ps1         # Windows (PowerShell)
-```
-
-Each launcher resolves its own location, so `run.sh` can be symlinked into `~/.local/bin`:
-
-```sh
-ln -sf ~/Projects/codium-ext-tui/run.sh ~/.local/bin/codium-ext
+npm run dev
 ```
 
 ## Keys
@@ -61,21 +53,18 @@ ln -sf ~/Projects/codium-ext-tui/run.sh ~/.local/bin/codium-ext
 ## CLI
 
 ```sh
-./run.sh --list
-./run.sh --probe dbaeumer.vscode-eslint
-./run.sh --install dbaeumer.vscode-eslint            # latest stable
-./run.sh --install dbaeumer.vscode-eslint@3.0.24     # exact version
-./run.sh --install <id> --dry-run                    # resolve only
-./run.sh --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
-./run.sh --help
+npm run dev -- --list
+npm run dev -- --probe dbaeumer.vscode-eslint
+npm run dev -- --install dbaeumer.vscode-eslint            # latest stable
+npm run dev -- --install dbaeumer.vscode-eslint@3.0.24     # exact version
+npm run dev -- --install <id> --dry-run                    # resolve only
+npm run dev -- --list --extensions-dir /tmp/ext --user-data-dir /tmp/data
+npm run dev -- --help
 ```
 
 ## Layout
 
 ```
-run.sh             POSIX launcher (resolves its own directory)
-run.cmd            Windows cmd launcher
-run.ps1            Windows PowerShell launcher
 src/
   main.ts          CLI entry and headless modes
   models.ts        pure data types: version ordering, platform selection, list parsing
