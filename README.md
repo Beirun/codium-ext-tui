@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="codium-ext" width="536">
+  <img src="logo.png" alt="codium-ext" width="544">
 </p>
 
 A terminal UI for managing Microsoft Marketplace extensions in
