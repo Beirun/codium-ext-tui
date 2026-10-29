@@ -1,6 +1,6 @@
 # codium-ext
 
-A terminal UI for searching the Microsoft Marketplace and installing extensions into
+A terminal UI for managing Microsoft Marketplace extensions in
 [VSCodium](https://github.com/VSCodium/vscodium).
 
 Built with [`@opentui/core`](https://opentui.com) (Zig core + TypeScript bindings) on Node 26.
