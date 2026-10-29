@@ -17,6 +17,47 @@ there is no built-in way to search for it.
 installs it like any other extension. The result is the same on-disk extension an Extensions-tab install
 would produce, so updates, uninstall, and `--list-extensions` all keep working.
 
+## Features
+
+### Search
+
+Type a query and press enter. Results come straight from the Microsoft Marketplace and render as three-line
+rows — display name, publisher id, then latest compatible version with its install count. The tab strip
+switches between the Marketplace search and the extensions already installed locally.
+
+![Search screen](screenshots/search.png)
+
+### Installed
+
+The installed list comes from `codium --list-extensions --show-versions` and is enriched from
+`extensions.json` in the VSCodium extensions directory (`~/.vscode-oss/extensions` on macOS/Linux,
+`%USERPROFILE%\.vscode-oss\extensions` on Windows) for source, pinned state, and install date. Rows show
+display name (from the extension's `package.json`), publisher id, then version · source · pinned · date.
+
+![Installed screen](screenshots/installed.png)
+
+### Details
+
+Pick a result to see its description, install count, last update, installed version, and how many versions
+the publisher ships. Actions are `Install latest` (or `Reinstall <version>` when that version is already
+present), `Choose version…`, and `Uninstall` — the last is confirmed first, then runs
+`codium --uninstall-extension` and polls until the extension disappears from the list.
+
+![Details screen](screenshots/details.png)
+
+### Choose version
+
+The version picker lists every build matching this machine — `universal` plus the native target
+(`linux-x64`, `darwin-arm64`, `win32-x64`, …) — newest first, tags prereleases, and marks the installed one.
+
+![Version picker](screenshots/versions.png)
+
+### Install
+
+Installs run in a dedicated screen with the live phase, a progress bar, and the piped `codium` output.
+`esc` cancels cooperatively: the download stops, the work directory is removed, and no partial extension
+is left behind.
+
 ## Requirements
 
 - Node.js **26.4+** (OpenTUI loads its native core through FFI, so the launcher passes `--experimental-ffi`)
@@ -45,22 +86,6 @@ npm run dev
 | `esc` | leave the search box · go back one screen · cancel an install |
 | `ctrl+r` | refresh the installed list |
 | `q` | quit (not while typing in the search box) |
-
-## Screens
-
-- **Search** — type a query and press enter. Each result is a three-line row: extension display name,
-  publisher id, then latest version · install count.
-- **Installed** — the extensions installed on this machine, read from `codium --list-extensions --show-versions`
-  and enriched from `extensions.json` in the VSCodium extensions directory (`~/.vscode-oss/extensions` on
-  macOS/Linux, `%USERPROFILE%\.vscode-oss\extensions` on Windows) for source, pinned state, and install date.
-  Rows use the same shape: display name (from the extension's `package.json`), publisher id, then
-  version · source · pinned · date.
-- **Details** — description, install count, last update, installed version, then
-  `Install latest`, `Choose version…`, and — when the extension is installed — `Uninstall` (confirmed first,
-  then `codium --uninstall-extension` and a poll until it disappears from the list).
-  Version lists are filtered to `universal` and this machine's native build (`linux-x64`, `darwin-arm64`,
-  `win32-x64`, …), newest first, with prereleases tagged.
-- **Install** — live phase, progress bar and the piped `codium` output. `esc` cancels cooperatively.
 
 ## CLI
 
@@ -103,6 +128,7 @@ src/
 tests/             node:test — models, marketplace parsing, installer pipeline, UI via createTestRenderer
 docs/
   architecture.md  module map, data flow, install pipeline, and invariants
+screenshots/       rendered frames used by the Features section
 ```
 
 Downloads and installs happen under a per-user cache directory (`~/.cache/codium-ext-tui` on Linux,
