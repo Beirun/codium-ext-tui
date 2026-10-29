@@ -2,6 +2,7 @@ import {
   InputRenderable,
   StyledText,
   TextRenderable,
+  bg,
   bold,
   createCliRenderer,
   dim,
@@ -27,23 +28,54 @@ function logoSection(column: number): LogoSection {
   return column < LOGO_TAIL_START ? "dash" : "tail"
 }
 
-function logoColor(row: string, column: number): string {
-  return row[column] === "+" ? palette.blueDeep : LOGO_STROKE[logoSection(column)]
+function logoColor(row: string, column: number): string | null {
+  const cell = row[column]
+  if (cell === undefined || cell === " ") return null
+  return cell === "+" ? palette.blueDeep : LOGO_STROKE[logoSection(column)]
 }
 
-function logoContent(row: string): StyledText {
-  const blocks = (text: string): string => text.replace(/[#+]/g, "█")
+interface LogoCell {
+  text: string
+  fg: string
+  bg: string | null
+}
+
+function logoCells(): LogoCell[][] {
+  const rows: LogoCell[][] = []
+  for (let pixelRow = 0; pixelRow < LOGO_ROWS.length; pixelRow += 2) {
+    const top = LOGO_ROWS[pixelRow] ?? ""
+    const bottom = LOGO_ROWS[pixelRow + 1] ?? ""
+    const cells: LogoCell[] = []
+    for (let column = 0; column < top.length; column++) {
+      const topColor = logoColor(top, column)
+      const bottomColor = logoColor(bottom, column)
+      if (topColor && bottomColor && topColor === bottomColor) cells.push({ text: "█", fg: topColor, bg: null })
+      else if (topColor && bottomColor) cells.push({ text: "▀", fg: topColor, bg: bottomColor })
+      else if (topColor) cells.push({ text: "▀", fg: topColor, bg: null })
+      else if (bottomColor) cells.push({ text: "▄", fg: bottomColor, bg: null })
+      else cells.push({ text: " ", fg: palette.comment, bg: null })
+    }
+    rows.push(cells)
+  }
+  return rows
+}
+
+function logoContent(cells: LogoCell[]): StyledText {
   const chunks: TextChunk[] = []
   let start = 0
-  let color = logoColor(row, 0)
-  for (let column = 1; column < row.length; column++) {
-    const next = logoColor(row, column)
-    if (next === color) continue
-    chunks.push(fg(color)(blocks(row.slice(start, column))))
-    start = column
-    color = next
+  const flush = (end: number): void => {
+    const run = cells[start]!
+    const text = cells.slice(start, end).map((cell) => cell.text).join("")
+    chunks.push(run.bg ? bg(run.bg)(fg(run.fg)(text)) : fg(run.fg)(text))
   }
-  chunks.push(fg(color)(blocks(row.slice(start))))
+  for (let index = 1; index < cells.length; index++) {
+    const previous = cells[start]!
+    const cell = cells[index]!
+    if (cell.fg === previous.fg && cell.bg === previous.bg) continue
+    flush(index)
+    start = index
+  }
+  flush(cells.length)
   return new StyledText(chunks)
 }
 
@@ -79,16 +111,16 @@ export class App implements Navigator {
 
     const logo = new BoxRenderable(renderer, {
       width: "100%",
-      height: LOGO_ROWS.length,
+      height: LOGO_ROWS.length / 2,
       flexDirection: "column",
       backgroundColor: palette.bgDark,
       paddingX: 1,
       marginTop: 2,
     })
-    for (const row of LOGO_ROWS) {
+    for (const cells of logoCells()) {
       logo.add(
         new TextRenderable(renderer, {
-          content: logoContent(row),
+          content: logoContent(cells),
           height: 1,
           wrapMode: "none",
           textAlign: "center",
