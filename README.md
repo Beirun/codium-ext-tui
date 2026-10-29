@@ -1,4 +1,6 @@
-# codium-ext
+<p align="center">
+  <img src="logo.png" alt="codium-ext" width="536">
+</p>
 
 A terminal UI for managing Microsoft Marketplace extensions in
 [VSCodium](https://github.com/VSCodium/vscodium).
@@ -129,6 +131,7 @@ tests/             node:test — models, marketplace parsing, installer pipeline
 docs/
   architecture.md  module map, data flow, install pipeline, and invariants
 screenshots/       rendered frames used by the Features section
+logo.png           wordmark shown at the top of the README
 ```
 
 Downloads and installs happen under a per-user cache directory (`~/.cache/codium-ext-tui` on Linux,
