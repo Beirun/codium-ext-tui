@@ -71,7 +71,7 @@ async function withApp(run: (ctx: Awaited<ReturnType<typeof createTestRenderer>>
 test("the wordmark renders above the header", async () => {
   await withApp(async (setup, app) => {
     app.push(new MainScreen(app, deps()))
-    const frame = await setup.waitForFrame((value) => value.includes("█████ █   █ █████"))
+    const frame = await setup.waitForFrame((value) => value.includes(" ███   ███   ████"))
     assert.match(frame, /codium-ext {2}search/)
   })
 })
