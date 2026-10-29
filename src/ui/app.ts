@@ -1,5 +1,6 @@
 import {
   InputRenderable,
+  StyledText,
   TextRenderable,
   bold,
   createCliRenderer,
@@ -7,11 +8,44 @@ import {
   fg,
   t,
 } from "@opentui/core"
-import type { CliRenderer, KeyEvent } from "@opentui/core"
+import type { CliRenderer, KeyEvent, TextChunk } from "@opentui/core"
 import { BoxRenderable } from "@opentui/core"
 import { palette } from "../theme.ts"
 import type { Navigator, Screen, StatusTone } from "./common.ts"
-import { LOGO_ROWS } from "./logo.ts"
+import { LOGO_DASH_START, LOGO_ROWS, LOGO_TAIL_START } from "./logo.ts"
+
+type LogoSection = "head" | "dash" | "tail"
+
+const LOGO_STROKE: Record<LogoSection, string> = {
+  head: palette.blueFaint,
+  dash: palette.comment,
+  tail: palette.blueMuted,
+}
+
+function logoSection(column: number): LogoSection {
+  if (column < LOGO_DASH_START) return "head"
+  return column < LOGO_TAIL_START ? "dash" : "tail"
+}
+
+function logoColor(row: string, column: number): string {
+  return row[column] === "+" ? palette.blueDeep : LOGO_STROKE[logoSection(column)]
+}
+
+function logoContent(row: string): StyledText {
+  const blocks = (text: string): string => text.replace(/[#+]/g, "█")
+  const chunks: TextChunk[] = []
+  let start = 0
+  let color = logoColor(row, 0)
+  for (let column = 1; column < row.length; column++) {
+    const next = logoColor(row, column)
+    if (next === color) continue
+    chunks.push(fg(color)(blocks(row.slice(start, column))))
+    start = column
+    color = next
+  }
+  chunks.push(fg(color)(blocks(row.slice(start))))
+  return new StyledText(chunks)
+}
 
 export class App implements Navigator {
   readonly renderer: CliRenderer
@@ -54,7 +88,7 @@ export class App implements Navigator {
     for (const row of LOGO_ROWS) {
       logo.add(
         new TextRenderable(renderer, {
-          content: t`${fg(palette.blueFaint)(row.slice(0, 36))}${fg(palette.comment)(row.slice(36, 41))}${fg(palette.blueMuted)(row.slice(41))}`,
+          content: logoContent(row),
           height: 1,
           wrapMode: "none",
           textAlign: "center",

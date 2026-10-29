@@ -10,6 +10,7 @@ export const palette = {
   comment: "#565f89",
   blueFaint: "#4f69a1", // 65% of blue
   blueMuted: "#6282c6", // 80% of blue
+  blueDeep: "#25314a", // 30% of blue, inset face of the wordmark
   gutter: "#3b4261",
   blue: "#7aa2f7",
   cyan: "#7dcfff",
