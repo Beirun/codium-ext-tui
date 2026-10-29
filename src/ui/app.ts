@@ -116,7 +116,7 @@ export class App implements Navigator {
       backgroundColor: palette.bgDark,
       paddingX: 1,
       marginTop: 2,
-      marginBottom: 1,
+      marginBottom: 2,
     })
     for (const cells of logoCells()) {
       logo.add(
