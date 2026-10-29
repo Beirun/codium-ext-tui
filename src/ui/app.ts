@@ -11,6 +11,7 @@ import type { CliRenderer, KeyEvent } from "@opentui/core"
 import { BoxRenderable } from "@opentui/core"
 import { palette } from "../theme.ts"
 import type { Navigator, Screen, StatusTone } from "./common.ts"
+import { LOGO_ROWS } from "./logo.ts"
 
 export class App implements Navigator {
   readonly renderer: CliRenderer
@@ -42,6 +43,25 @@ export class App implements Navigator {
         paddingX: 1,
       })
 
+    const logo = new BoxRenderable(renderer, {
+      width: "100%",
+      height: LOGO_ROWS.length,
+      flexDirection: "column",
+      backgroundColor: palette.bgDark,
+      paddingX: 1,
+      marginTop: 2,
+    })
+    for (const row of LOGO_ROWS) {
+      logo.add(
+        new TextRenderable(renderer, {
+          content: t`${fg(palette.blueFaint)(row.slice(0, 36))}${fg(palette.comment)(row.slice(36, 41))}${fg(palette.blueMuted)(row.slice(41))}`,
+          height: 1,
+          wrapMode: "none",
+          textAlign: "center",
+        }),
+      )
+    }
+
     const header = makeBar()
     this.headerLeft = new TextRenderable(renderer, { content: "", height: 1, flexGrow: 1 })
     this.headerRight = new TextRenderable(renderer, { content: "", height: 1 })
@@ -62,6 +82,7 @@ export class App implements Navigator {
     footer.add(this.footerLeft)
     footer.add(this.footerRight)
 
+    shell.add(logo)
     shell.add(header)
     shell.add(this.body)
     shell.add(footer)

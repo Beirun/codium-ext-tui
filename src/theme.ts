@@ -8,6 +8,8 @@ export const palette = {
   fg: "#c0caf5",
   fgDim: "#a9b1d6",
   comment: "#565f89",
+  blueFaint: "#4f69a1", // 65% of blue
+  blueMuted: "#6282c6", // 80% of blue
   gutter: "#3b4261",
   blue: "#7aa2f7",
   cyan: "#7dcfff",
