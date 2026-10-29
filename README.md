@@ -1,9 +1,21 @@
 # codium-ext
 
-A terminal UI for searching the Microsoft Marketplace and installing extensions into VSCodium.
+A terminal UI for searching the Microsoft Marketplace and installing extensions into
+[VSCodium](https://github.com/VSCodium/vscodium).
 
 Built with [`@opentui/core`](https://opentui.com) (Zig core + TypeScript bindings) on Node 26.
 Each install follows one pipeline: **download the `.vsix` → `codium --install-extension <file>` → delete the `.vsix`**.
+
+## Why
+
+VSCodium ships with [Open VSX](https://open-vsx.org) as its extension gallery — the Microsoft Marketplace
+license does not allow non-Microsoft builds to use it. So any extension published only to the Microsoft
+Marketplace (or one whose Open VSX mirror lags behind) never appears in VSCodium's Extensions tab, and
+there is no built-in way to search for it.
+
+`codium-ext` queries the Microsoft Marketplace directly and hands the `.vsix` to the `codium` CLI, which
+installs it like any other extension. The result is the same on-disk extension an Extensions-tab install
+would produce, so updates, uninstall, and `--list-extensions` all keep working.
 
 ## Requirements
 
